@@ -10,33 +10,17 @@
 \graphicspath{ {images/} }
 
 \begin{document}
-\title{Investigating the Overhead of the REST Protocol when Using Cloud Services for HPC Storage} % Moving Cloud Storage to HPC
-%\subtitle{} % Performance Challenges and Opportunities for Cloud Technologies
-%
-%\titlerunning{Abbreviated paper title}
-% If the paper title is too long for the running head, you can set
-% an abbreviated paper title here
-%
+\title{Investigating the Overhead of the REST Protocol when Using Cloud Services for HPC Storage} 
 \author{Frank Gadban\inst{1} \and Julian Kunkel\inst{2} \and Thomas Ludwig\inst{3}}
-%
 \authorrunning{F. Gadban et al.}
-% First names are abbreviated in the running head.
-% If there are more than two authors, 'et al.' is used.
-%
 \institute{University of Hamburg, 20146 Hamburg, Germany
 \email{frank.gadban@studium.uni-hamburg.de}\\
-%\url{https://www.uni-hamburg.de}
 \and
 Reading University, Reading, UK\\
-%\email{j.m.kunkel@reading.ac.uk}
 \and
 DKRZ, 20146 Hamburg \\
-%\email {ludwig@dkrz.de}
 }
 
-%
-\maketitle       % typeset the header of the contribution
-%
 \begin{abstract}
 With the significant advances in Cloud Computing, it is inevitable to explore the usage of Cloud technology in HPC workflows. While many Cloud vendors offer to move complete HPC workloads into the Cloud, this is limited by the massive demand of computing power alongside storage resources typically required by I/O intensive HPC applications. Eventually, the cost of storing and managing data produced by those applications determines where workloads should run. It is widely believed that HPC hardware and software protocols like MPI yield superior performance and lower resource consumption compared to the HTTP transfer protocol used by RESTful Web Services that are prominent in Cloud execution and Cloud storage. With the advent of enhanced versions of HTTP, it is time to reevaluate the effective usage of cloud-based storage in HPC and their ability to cope with various types of data-intensive workloads. 
 In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant and resource-efficient solution, in particular for accessing large files. 
