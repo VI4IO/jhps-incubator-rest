@@ -9,6 +9,19 @@
 \usepackage{cleveref}
 \graphicspath{ {images/} }
 
+
+%\setlength{\parindent}{2em}
+%\setlength{\parskip}{0.3em}
+%\renewcommand{\baselinestretch}{0.7}
+
+\topskip=0pt
+\parskip=0pt
+\parindent=2pt
+\baselineskip=0pt
+
+
+
+
 \begin{document}
 \title{Investigating the Overhead of the REST Protocol when Using Cloud Services for HPC Storage} 
 \author{Frank Gadban\inst{1} \and Julian Kunkel\inst{2} \and Thomas Ludwig\inst{3}}
@@ -21,7 +34,8 @@ Reading University, Reading, UK\\
 DKRZ, 20146 Hamburg \\
 }
 
-\maketitle       
+\maketitle     
+  
 \begin{abstract}
 With the significant advances in Cloud Computing, it is inevitable to explore the usage of Cloud technology in HPC workflows. While many Cloud vendors offer to move complete HPC workloads into the Cloud, this is limited by the massive demand of computing power alongside storage resources typically required by I/O intensive HPC applications. Eventually, the cost of storing and managing data produced by those applications determines where workloads should run. It is widely believed that HPC hardware and software protocols like MPI yield superior performance and lower resource consumption compared to the HTTP transfer protocol used by RESTful Web Services that are prominent in Cloud execution and Cloud storage. With the advent of enhanced versions of HTTP, it is time to reevaluate the effective usage of cloud-based storage in HPC and their ability to cope with various types of data-intensive workloads. 
 In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant and resource-efficient solution, in particular for accessing large files. 
@@ -65,8 +79,8 @@ To define our performance model, many metrics are to be considered, which depict
 \item rtt: round trip time
 \item mtu: maximum transfer unit
 \item mss: maximum segment size, transmission protocol dependent (see \cref{eq:net-tp})
-\item mem\_tp: the memory throughput, i.e., the speed of data eviction from L3 to the main memory; influenced by the speed of the different caches
-\item eBW \cite{chang1995effective}: is the effective bandwidth between client and server, which is the minimum bandwidth of all the hardware components between them (memory throughput, PCI Bus, network interfaces...)
+\item mem\_tp: the memory throughput i.e. speed of data eviction from L3 to main memory.
+\item eBW \cite{chang1995effective}: is the effective bandwidth between client and server.
 \end{itemize}
 \textit{Experiment-specific configurations and results:}
 \begin{itemize}
@@ -78,10 +92,10 @@ To define our performance model, many metrics are to be considered, which depict
 \textit{Observable metrics (e.g., using Likwid):}
 \begin{itemize}
 \item CUC: number of unhalted cycles on each core %a.k.a. CPU\_CLK\_UNHALTED\_CORE, CUCs and CUCc are for the server and client respectively.
-\item L3EV:amount of data volume loaded and evicted from/to L3 from the perspective of CPU cores, i.e. the data flowing through L3\cite{l3explainedlik,intel-l3}, L3EVs and L3EVc are for server and client respectively.
-\item PLR: the packet loss rate, which is theoretically proportional to the number of parallel connections. 
+\item L3EV:amount of data volume loaded and evicted from/to L3 from the perspective of CPU cores\cite{l3explainedlik,intel-l3}, L3EVs and L3EVc are for server and client respectively.
+\item PLR: the packet loss rate, proportional to the number of parallel connections. 
 \end{itemize}
-In our preliminary model t(request) is the time starting from the sending of the first byte of the request to the time the complete response is received, and can be calculated as follows:
+In our preliminary model t(request) is the time starting from the sending of the first byte of the request to the time the complete response is received:
 \begin{equation}
 t(request) = t(client) + t(network) + t(server)
 \end{equation}
@@ -125,37 +139,33 @@ As such, many factors can influence the above starting from the application deli
 
 \section{Experiments}
 \label{sec:experiments}
-The tests were performed on two different hardware platforms: the first is the WR Cluster, a small test system available at the University of Hamburg, the second is the Mistral supercomputer\,\cite{mistral}, the HPC system for earth-system research provided at the German Climate Computing Center (DKRZ).
-\subsection{Test Environments}
-The nodes of the WR Cluster are equipped with two Intel Xeon 5650 processors each offering 6 cores. The supercomputer Mistral \cite{mistral} provides 3000 compute nodes each equipped with an FDR Infiniband interconnect. The nodes used for the testing are equipped with two Intel Broadwell processors (E5-2680 @2.5 GHz) \cite{intel-xeon}.
+The tests were performed on two different hardware platforms: the first is the WR Cluster, a small test system, equipped with Intel Xeon 5650 processors and Gbit Ethernet, the second is the Mistral supercomputer\,\cite{mistral}, the HPC system for earth-system research provided at the German Climate Computing Center (DKRZ), it provides 3000 compute nodes each equipped with an FDR Infiniband interconnect. The nodes used for the testing are equipped with two Intel Broadwell processors (E5-2680 @2.5 GHz) \cite{intel-xeon}
 
 \subsection{Benchmark and Analysis Tools}\label{subsec:benchmark1}
 The RESTful API is the typical way to realize access to object storage, and as such the tools used in this article were preliminary developed to assess HTTP performance.
-The first experiment checks the latency introduced by a simple web server serving static files, the setup, shown in \cref{fig:wrk2bench}, consists of the lighttpd web server \cite{lighttpd} hosting files of different sizes. These files contain randomly generated data, and are placed initially in the in-memory file system (tmpfs) to minimize any storage-related overhead such as disk drive access time. The tests are accomplished using the wrk2 tool \cite{wrk2URL} which is a typical HTTP load testing tool. To avoid Coordinated Omission \cite{wrk2URL}, wrk2 measures response latency from the time the transmission should have occurred - according to the constant throughput configured for the run- to the moment it was received.
+The first experiment checks the latency introduced by a simple web server serving static files, the setup, shown in \cref{fig:wrk2bench}, consists of the lighttpd web server \cite{lighttpd} hosting files of different sizes. These files contain randomly generated data, and are placed initially in the in-memory file system (tmpfs) to minimize any storage-related overhead such as disk drive access time. The tests are accomplished using the wrk2 tool \cite{wrk2URL}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=.6\linewidth]{wrk2bench.png}
 \caption{A simplified overview of the Benchmark Setup}
+\vspace{-1.5em}
 \label{fig:wrk2bench}
 \end{figure}
-In the analysis, we vary the number of threads and the number of HTTP connections kept open while trying to keep a steady rate of 2000 requests/second for 60 seconds for each file size.
+In the following analysis, we vary the number of threads and the number of HTTP connections kept open while trying to keep a steady rate of 2000 requests/second for 60 seconds for each file size.
 \subsection{Latency}\label{subsec:latency}
 The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obtained latency distributions:
-\jk{Die Bilder kann man nicht lesen. Text ist einfach zu klein. ca. +80-100\%}
-\jk{Immer noch zu klein}
-\fg{und nun?}
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{plotfile100.png}
-        \caption{Latency variation in relation to open connections for a file of size 100\,KB}
+        \includegraphics[width=1\textwidth]{plotfile100.png}\vspace{-1em}
+        \caption{Latency variation in relation to open connections for a file of size 100\,KB}\vspace{-1.5em}
 			\label {fig:latency-to-oc-100}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{plotfile1000.png}
-        \caption{Latency variation in relation to open connections for a file of size 1000\,KB}
+        \includegraphics[width=1\textwidth]{plotfile1000.png}\vspace{-1em}
+        \caption{Latency variation in relation to open connections for a file of size 1000\,KB}\vspace{-1.5em}
 	   \label {fig:latency-to-oc-1000}
     \end{minipage}
 \end{figure}
@@ -163,20 +173,20 @@ The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obt
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{plotcon24.png}
-        \caption{Latency Variation in relation to file size for 24 open connections}
+        \includegraphics[width=1\textwidth]{plotcon24.png}\vspace{-1em}
+        \caption{Latency Variation in relation to file size for 24 open connections}\vspace{-1.5em}
 		\label {fig:latency-to-size-24}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{plotcon500.png}
-        \caption{Latency Variation in relation to file size for 500 open connections}
+        \includegraphics[width=1\textwidth]{plotcon500.png}\vspace{-1em}
+        \caption{Latency Variation in relation to file size for 500 open connections}\vspace{-1.5em}
 		\label {fig:latency-to-size-500}
     \end{minipage}
 \end{figure}
 \textbf{Observations and interpretation:}
 \begin{itemize}
-  \item Latency does not depend on the duration of the experiment moreover it linearly increases with the number of open connections (see \Cref{fig:latency-to-oc-100}). This is especially true for small file sizes however when the file size grows beyond a certain limit, the number of connections will become irrelevant to the introduced latency (see \Cref{fig:latency-to-oc-1000}). 
+  \item Latency linearly increases with the number of open connections (see \Cref{fig:latency-to-oc-100}), especially true for small file sizes however when the file size grows beyond a certain limit, the number of connections will become irrelevant to the introduced latency (see \Cref{fig:latency-to-oc-1000}). 
   \item As shown in fig.\ref{fig:latency-to-size-24}, for small file size, we observe a latency divergence in particular in the 99 percentile area
 for bigger file size, we noticed in the case of the 100\,KB, the desired request rate of 2000 req/s is not met due to the limitation of the underlying network infrastructure ( 1Gb/s ~ 125 MB/s)
   \item It is interesting to note that, in relation to file size (fig.\ref{fig:latency-to-size-24}) larger files lead to higher memory and network latencies in a way that they can saturate the server’s network bandwidth, lowering throughput (see \Cref{fig:latency-to-oc-1000}). Therefore,  for  serving  large files,  high  network  bandwidth  is  more  important  than compute resources. On the other hand, increasing the number of open Connections (fig.\ref{fig:latency-to-size-500}) will trigger TCP's congestion mechanism and such they will be competing for the same bandwidth. Increasing the file size as well will cause the Open Connections to lose packets and get stuck waiting for retransmissions.
@@ -184,12 +194,13 @@ for bigger file size, we noticed in the case of the 100\,KB, the desired request
 A similar latency distribution is observed when the tests are conducted on the same machine, thus using the optimized\cite{linuxkernelcommit} loopback interface, where theoretically the network does not pose any throughput bottleneck (iperf \cite{iperf} result~20 Gbs).
 From these experiments, we learn that to optimize the throughput, the web requests should not be using different open connections but rather use one or a relatively small number of open Connections and label the web requests accordingly, which is commonly known as HTTP multiplexing \,\cite{SMUX}, where, using the same TCP connection, multiple HTTP requests are divided into frames, assigned a unique ID called stream ID and then sent asynchronously, the server receives the frames and arranges them according to their stream ID and also responds asynchronously; same arrangement process happens at the client side allowing to achieve maximum parallelism.
 \subsection{Throughput}
-We consider throughput in terms of the number of requests and the effective network bandwidth. The network throughput of our system is calculated as follow:
+The network throughput of our system is calculated as follow:
 \[Throughput=\frac{Nreq \cdot Obj\_size}{time}\]
 \Cref{fig:throughput-to-size} shows that, in the case of inter-node communication, an increase in the number of Open Connections will increase the throughput, however, for file sizes above 1 MB, the influence becomes negligible.
 \begin{figure}
-\includegraphics[width=1.0\textwidth]{throughput-to-size.png}
+\includegraphics[width=1.0\textwidth]{throughput-to-size.png}\vspace{-1em}
 \caption{Throughput in KB/sec related to object size for different combinations of Open Connections/Threads.}
+\vspace{-1.5em}
 \label{fig:throughput-to-size}
 \end{figure}
 
@@ -198,13 +209,13 @@ In addition to the latency diagrams and the findings gained from them, another p
 The conducted experiment is similar to Section 4.2, however, this time we are using wrk\cite{wrkURL} without specifying a maximum req/s rate, for 1 minute, during this time Likwid is recording the CPU performance counters which are relevant in this scenario. The server application is pinned to one core using Likwid, the same is done on the client side, As wrk tests are performed using only 1 thread, this doesn’t impose a performance limitations and ensures that the process is run on the first physical core and not migrated between cores which may lead to overhead. 
 CPU consumption is recorded, CPU\_CLK\_UNHALTED\_CORE is the metric provided by Likwid that represents the number of clock ticks needed by the CPU to do some reasonable work. The instructions required to accomplish one request - by the server as well as by the client - seems to be linear with the file size, as shown in \Cref{fig:cuc-to-size}. To note here that the server seems to be consuming more CPU cycles as the client to deliver a request, which might be because we are using the lighttpd web server without modifying the default configuration. Note also that over a certain file size limit, the number of timeouts and socket errors increases since we are approaching the maximum throughput that can be achieved by the system.
 \begin{figure}
-\includegraphics[width=\textwidth]{cuc-to-size.png}
-\caption{CPU usage for the client and server related to size, for different Open Connections/Threads combinations}
+\includegraphics[width=\textwidth]{cuc-to-size.png}\vspace{-1em}
+\caption{CPU usage for the client and server related to size, for different Open Connections/Threads combinations}\vspace{-1.5em}
 \label{fig:cuc-to-size}
 \end{figure}
 \begin{figure}
-\includegraphics[width=\textwidth]{l3ev-to-size.png}
-\caption{L3 evicted volume for the client and server related to size, for different Open Connections/Threads combinations}
+\includegraphics[width=\textwidth]{l3ev-to-size.png}\vspace{-1em}
+\caption{L3 evicted volume for the client and server related to size, for different Open Connections/Threads combinations}\vspace{-1.5em}
 \label{fig:l3ev-to-size}
 \end{figure}
 Regarding memory utilization: Basically, when reading a file (represented by HTTP response), the client needs to store the data received in memory. If the file size exceeds the size of the CPU cache, we expect that data is evicted to main memory, which is measured in L3 cache evictions. This metric is recorded using Likwid and shown in \Cref{fig:l3ev-to-size}. Basically, we can see that even for 100 MB files only 10 MB of data is evicted on the client. There is no eviction on the server because it sends the data directly to the client. This is an indication that zero-copy \cite{zerocopy} is in use on the client and the network interface card offloads the processing of TCP/IP. This allows  the network card to store the data directly into the target memory location. Generally, with zero-copy, the application requests the kernel to copy the data directly from a file descriptor to the socket bypassing the copy in user mode buffer and, therefore, reducing the number of context switches between kernel and user mode.
@@ -217,12 +228,12 @@ To achieve this we launch the same tools used above (likwid+lighttpd) on one nod
 Then we launch the OSU Micro Benchmark\,\cite{osumicrobenchmark} alongside with likwid on two nodes using the same file sizes and record the same metrics. The OSU tests are executed over Infiniband, the first time by using RDMA and the second time over TCP.
 The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:throughput-rest-mpi}. Our observations and interpretations are as follows:
 \begin{figure}
-\includegraphics[width=\textwidth]{latency-rest-mpi.png}
-\caption{Latency results for the different protocols related to the file size} \label{fig:latency-rest-mpi}
+\includegraphics[width=\textwidth]{latency-rest-mpi.png}\vspace{-1em}
+\caption{Latency results for the different protocols related to the file size} \label{fig:latency-rest-mpi}\vspace{-1.5em}
 \end{figure}
 \begin{figure}
-\includegraphics[width=\textwidth]{throughput-rest-mpi.png}
-\caption{Throughput results for the different protocols related to the file size} \label{fig:throughput-rest-mpi}
+\includegraphics[width=\textwidth]{throughput-rest-mpi.png}\vspace{-1em}
+\caption{Throughput results for the different protocols related to the file size} \label{fig:throughput-rest-mpi}\vspace{-1.5em}
 \end{figure}
 Our observations and interpretations are as follows:
 \begin{itemize}
@@ -234,14 +245,14 @@ Our observations and interpretations are as follows:
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}
-        \caption{CPU usage per request, on the server and client, for each protocol}
+        \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}\vspace{-1em}
+        \caption{CPU usage per request, on the server and client, for each protocol}\vspace{-1.5em}
 		\label{fig:cpu-usage-rest-mpi}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}
-        \caption{L3 evicted per request, on the server and client, for each protocol}
+        \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}\vspace{-1em}
+        \caption{L3 evicted per request, on the server and client, for each protocol}\vspace{-1.5em}
 		\label{fig:l3ev-rest-mpi}
     \end{minipage}
 \end{figure}
@@ -288,51 +299,53 @@ In conclusion, we notice that while TCP proved itself for end-to-end communicati
 Based on the defined model, we compare the performance of the different HTTP protocols, the same setup described in \cref{fig:wrk2bench} is used here, however the web server, in this case, should be able to deliver the three different protocols. Therefore, openlitespeed \cite{openlitespeed} is used and the suitable benchmark tool is h2load \cite{h2load}.
 To note that we test here the ngtcp2 \cite{ngtcp2} implementation of HTTP3, because it's TLS library independent, not like other HTTP3 implementations like quiche \cite{quiche} which requires boringssl. Since at the time of writing, the official OpenSSL Team doesn’t support QUIC \cite{opensslquicblog} we use a patched version of OpenSSL provided by the ngtcp2 team.
 Since HTTP3 didn't achieve the maturity phase yet, we are using the protocols as they are defined in the 27th Draft by the IETF QUIC Working group \cite{quicwg}.
-The latency and throughput results of the tests on the WR cluster are shown in \Cref{fig:lat-comp} and \Cref{fig:rps-comp} respectively:
-\begin{figure}[H]
+The latency and throughput results of the tests on the WR cluster are shown in \Cref{fig:lat-comp} and \Cref{fig:rps-comp}.
+\vspace{-1em}
+\begin{figure}
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{lat-comparison-h2load.png}
-        \caption{Latency results for the different protocols}
+        \includegraphics[width=1\textwidth]{lat-comparison-h2load.png}\vspace{-1em}
+        \caption{Latency results for the different protocols}\vspace{-1.5em}
 		\label {fig:lat-comp}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{rps-comparison-h2load.png}
-        \caption{Throughput results for the different protocols}
+        \includegraphics[width=1\textwidth]{rps-comparison-h2load.png}\vspace{-1em}
+        \caption{Throughput results for the different protocols}\vspace{-1.5em}
 		\label {fig:rps-comp}
     \end{minipage}
 \end{figure}
-Similar results are also obtained on Mistral over InfiniBand:
-\begin{figure}[H]
+Similar results are also obtained on Mistral over InfiniBand, as shown in \Cref{fig:lat-comp-mistral} and \Cref{fig:rps-comp-mistral}
+\begin{figure}
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{lat-h2load-mistral.png}
-        \caption{Latency results for the different protocols}
+        \includegraphics[width=1\textwidth]{lat-h2load-mistral.png}\vspace{-1em}
+        \caption{Latency results for the different protocols}\vspace{-1.5em}
 		\label {fig:lat-comp-mistral}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{rps-h2load-mistral.png}
-        \caption{Throughput results for the different protocols}
+        \includegraphics[width=1\textwidth]{rps-h2load-mistral.png}\vspace{-1em}
+        \caption{Throughput results for the different protocols}\vspace{-1.5em}
 		\label {fig:rps-comp-mistral}
     \end{minipage}
 \end{figure}
+
 Although we are expecting HTTP2 and HTTP3 to perform better than HTTP 1.1, this is not the case. A closer look at the evolution of the parameters defined in our model reveals the cause:
-\begin{figure}[H]
+\begin{figure}
     \centering
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{cuc-h2load-mistral.png}
-        \caption{Client CPU Consumption for the different protocols}
+        \includegraphics[width=1\textwidth]{cuc-h2load-mistral.png}\vspace{-1em}
+        \caption{Client CPU Consumption for the different protocols}\vspace{-1.5em}
 		\label {fig:cuc-comp}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=1\textwidth]{l3ev-h2load-mistral.png}
-        \caption{Client Memory consumption for the different protocols}
+        \includegraphics[width=1\textwidth]{l3ev-h2load-mistral.png}\vspace{-1em}
+        \caption{Client Memory consumption for the different protocols}\vspace{-1.5em}
 		\label {fig:llod-comp}
     \end{minipage}
 \end{figure}
@@ -359,5 +372,3 @@ Tables can be found at : \href{https://github.com/http-3/rest-overhead-paper}{ht
 
 
 \end{document}
-
-
