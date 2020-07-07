@@ -272,10 +272,13 @@ The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:
 		\label{fig:l3ev-rest-mpi}
     \end{minipage}
 \end{figure}
+\vspace{-1.5em}
 \subsection{HTTP Overhead}
-To calculate the overhead per request, in this case for HTTP 1.1, we have the amount of bytes\_read by the HTTP parser in wrk, and knowing the Number of request achieved, we can assume that:
-\[http\_overhead\_per\_byte=\frac{bytes\_read}{Nreq} - obj\-size]\]
-We find that the overhead is about 233 bytes for every request, this is due to the uncompressed, literally redundant, HTTP response headers, which can constitute a significant portion of the HTTP traffic, specifically for large numbers of HTTP requests and for files sizes smaller than 1 KB.
+
+For HTTP 1.1, knowing the amount of bytes\_read by the HTTP parser in wrk, and the number of request achieved:
+$ overhead\_per\_request=\frac{bytes\_read}{Nreq} - obj\-size $
+
+We find that the overhead is about 233 bytes per request, mainly due to the uncompressed, literally redundant, HTTP response headers.
 \section{Evaluation of the Performance Model} \label{sec:evaluation}
 To validate the predictive model defined in \cref{eq:model}, we use the values reported by the REST latency Benchmark on Mistral in \Cref{subsec:tcpib}; the hardware-specific parameters are calculated as follows:
 Data between sockets and memory is shipped via a 9.6 GT/s QPI interface \cite{intel-xeon}. According to the Intel QPI specification \cite{intel-qpi} 16 bit of data are transferred per cycle, thus the uni-directional speed is 19,6 GB/s. The communication protocol has an overhead of roughly 11 %, therefore, mem_tp = 17,088 MB/s.
@@ -363,4 +366,3 @@ As future work, we aim to validate that REST is a performant and efficient alter
 
 
 \end{document}
-
