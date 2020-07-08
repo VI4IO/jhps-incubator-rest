@@ -155,24 +155,24 @@ The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obt
 
 \begin{figure}[!b]
   \begin{subfigure}[t]{0.49\textwidth}
-        \includegraphics[width=1\textwidth]{plotfile100.png}\vspace{-2em}
-        \caption{Variable open connections for 100\,KB files}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{plotfile100.png}\vspace{-0.2em}
+        \caption{Variable open connections for 100\,KB files}\vspace{-0.2em}
 			\label {fig:latency-to-oc-100}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\textwidth}
-        \includegraphics[width=1\textwidth]{plotfile1000.png}\vspace{-2em}
-        \caption{Variable open connections for 1000\,KB files}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{plotfile1000.png}\vspace{-0.2em}
+        \caption{Variable open connections for 1000\,KB files}\vspace{-0.2em}
 	  \label {fig:latency-to-oc-1000}
   \end{subfigure}
 
   \begin{subfigure}[t]{0.49\textwidth}
-        \includegraphics[width=1\textwidth]{plotcon24.png}\vspace{-2em}
-        \caption{Variable file size for 24 open connections}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{plotcon24.png}\vspace{-0.2em}
+        \caption{Variable file size for 24 open connections}\vspace{-0.2em}
 		\label {fig:latency-to-size-24}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\textwidth}
-        \includegraphics[width=1\textwidth]{plotcon500.png}\vspace{-2em}
-        \caption{Variable file size for 500 open connections}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{plotcon500.png}\vspace{-0.2em}
+        \caption{Variable file size for 500 open connections}\vspace{-0.2em}
 		\label {fig:latency-to-size-500}
   \end{subfigure}
 
@@ -188,6 +188,7 @@ for bigger file size, we noticed in the case of the 100\,KB, the desired request
 \end{itemize}
 A similar latency distribution is observed when the tests are conducted on the same machine, thus using the optimized\cite{linuxkernelcommit} loopback interface, where theoretically the network does not pose any throughput bottleneck (iperf \cite{iperf} result~20 Gbs).
 From these experiments, we learn that to optimize the throughput, the web requests should not be using different open connections but rather use one or a relatively small number of open Connections and label the web requests accordingly, which is commonly known as HTTP multiplexing \,\cite{SMUX}, where, using the same TCP connection, multiple HTTP requests are divided into frames, assigned a unique ID called stream ID and then sent asynchronously, the server receives the frames and arranges them according to their stream ID and also responds asynchronously; same arrangement process happens at the client side allowing to achieve maximum parallelism.
+
 \subsection{Throughput}
 \begin{minipage}{0.5\textwidth}
 The network throughput of our system is calculated as follow:
@@ -202,6 +203,7 @@ The network throughput of our system is calculated as follow:
 \vspace{-2.5em}
 \label{fig:throughput-to-size}
 \end{figure}
+
 \subsection{Resource Usage Measurements}
 In addition to the latency diagrams and the findings gained from them, another point to consider is the efficiency of the IO itself, this is why we measure the Memory and CPU usage needed to achieve a certain throughput. To accomplish this, likwid-perfctr\,\cite{likwid} is used. It uses the Linux ‘msr’ module to access the model specific registers stored in /dev/cpu/*/msr (which contain hardware performance counters), and calculates performance metrics, FLOPS, bandwidth, etc, based on the event counts collected over the runtime of the application process.
 The conducted experiment is similar to Section 4.2, however, this time we are using wrk\cite{wrkURL} without specifying a maximum req/s rate, for 1 minute, during this time Likwid is recording the CPU performance counters which are relevant in this scenario. The server application is pinned to one core using Likwid, the same is done on the client side, As wrk tests are performed using only 1 thread, this doesn’t impose a performance limitations and ensures that the process is run on the first physical core and not migrated between cores which may lead to overhead. 
@@ -211,14 +213,14 @@ CPU consumption is recorded, CPU\_CLK\_UNHALTED\_CORE is the metric provided by 
     \centering
 
   \begin{subfigure}[t]{0.7\textwidth}
-        \includegraphics[width=1\textwidth]{cuc-to-size.png}\vspace{-1em}
-        \caption{CPU usage}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{cuc-to-size.png}\vspace{-0.2em}
+        \caption{CPU usage}\vspace{-0.2em}
 		\label{fig:cuc-to-size}
   \end{subfigure}
 
   \begin{subfigure}[t]{0.7\textwidth}
-        \includegraphics[width=1\textwidth]{l3ev-to-size.png}\vspace{-1em}
-		\caption{L3 evicted volume}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{l3ev-to-size.png}\vspace{-0.2em}
+		\caption{L3 evicted volume}\vspace{-0.2em}
 		\label{fig:l3ev-to-size}
   \end{subfigure}
 
@@ -235,22 +237,21 @@ To achieve this we launch the same tools used above (likwid+lighttpd) on one nod
 Then we launch the OSU Micro Benchmark\,\cite{osumicrobenchmark} alongside with likwid on two nodes using the same file sizes and record the same metrics. The OSU tests are executed over Infiniband, the first time by using RDMA and the second time over TCP.
 The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:throughput-rest-mpi}. We notice that:
 
-\begin{figure}
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{latency-rest-mpi.png}\vspace{-1em}
-        \caption{Latency results for the different protocols related to the file size}\vspace{-1.5em}
+\begin{figure}[!bt]
+  \begin{subfigure}[t]{0.7\textwidth}
+        \includegraphics[width=1\textwidth]{latency-rest-mpi.png}\vspace{-0.2em}
+        \caption{Latency}\vspace{-0.2em}
 		\label{fig:latency-rest-mpi}
-    \end{minipage}\hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{throughput-rest-mpi.png}\vspace{-1em}
-        \caption{Throughput results for the different protocols related to the file size}\vspace{-1.5em}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.7\textwidth}
+        \includegraphics[width=1\textwidth]{throughput-rest-mpi.png}\vspace{-0.2em}
+        \caption{Throughput}\vspace{-0.2em}
 		\label{fig:throughput-rest-mpi}
-    \end{minipage}
+  \end{subfigure}
+\caption{Results for the different protocols for variable file size}
 \end{figure}
-\vspace{-2em}
+
+
 \begin{itemize}
   \item For small object sizes, the latency of Rest is obviously higher than the one of MPI, as already mentioned in our latency tests, this is due to the HTTP overhead.
   \item The throughput achieved using MPI is better than the one using REST however when comparing MPI and REST both over TCP, we notice that this is not the case especially for very small and large files which leads to the conclusion that the overhead due to the TCP stack is the main factor slowing down the object storage implementation.
