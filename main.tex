@@ -316,15 +316,13 @@ The latency and throughput results of the tests on Mistral over InfiniBand are s
 \begin{figure}
     \centering
     \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{lat-h2load-mistral.png}\vspace{-1em}
-        \caption{Latency results for the different protocols}\vspace{-1.5em}
-		\label {fig:lat-comp-mistral}
+        \centering
+        \includegraphics[width=1\textwidth]{lat-h2load-mistral.png}
+        \caption{Latency results for the different protocols}		\label {fig:lat-comp-mistral}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{rps-h2load-mistral.png}\vspace{-1em}
-        \caption{Throughput results for the different protocols}\vspace{-1.5em}
+        \centering        \includegraphics[width=1\textwidth]{rps-h2load-mistral.png}\vspace{-1em}
+        \caption{Throughput results for the different protocols}
 		\label {fig:rps-comp-mistral}
     \end{minipage}
 \end{figure}
@@ -333,16 +331,13 @@ Although we are expecting HTTP2 and HTTP3 to perform better than HTTP 1.1, this 
 \begin{figure}
     \centering
     \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{cuc-h2load-mistral.png}\vspace{-1em}
-        \caption{Client CPU Consumption for the different protocols}\vspace{-1.5em}
-		\label {fig:cuc-comp}
+        \centering\        \includegraphics[width=1\textwidth]{cuc-h2load-mistral.png}
+        \caption{Client CPU Consumption for the different protocols}		\label {fig:cuc-comp}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering\vspace{-2em}
-        \includegraphics[width=1\textwidth]{l3ev-h2load-mistral.png}\vspace{-1em}
-        \caption{Client Memory consumption for the different protocols}\vspace{-1.5em}
-		\label {fig:llod-comp}
+        \includegraphics[width=1\textwidth]{l3ev-h2load-mistral.png}
+        \caption{Client Memory consumption for the different protocols}		\label {fig:llod-comp}
     \end{minipage}
 \end{figure}
 Despite the obvious traffic saving of HTTP2, it comes at a considerable memory consumption, which renders the gained advantages negligible. The chosen HTTP3 implementation is circa 10 times CPU and memory consuming in comparison to the earlier versions, which indicates an implementation issue.
