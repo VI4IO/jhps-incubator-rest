@@ -154,23 +154,23 @@ In the following analysis, we vary the number of threads and the number of HTTP 
 The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obtained latency distributions.
 
 \begin{figure}[!b]
-  \begin{subfigure}[t]{0.49\textwidth}
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{plotfile100.png}\vspace{-0.2em}
         \caption{Variable open connections for 100\,KB files}\vspace{-0.2em}
 			\label {fig:latency-to-oc-100}
   \end{subfigure}
-  \begin{subfigure}[t]{0.49\textwidth}
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{plotfile1000.png}\vspace{-0.2em}
         \caption{Variable open connections for 1000\,KB files}\vspace{-0.2em}
 	  \label {fig:latency-to-oc-1000}
   \end{subfigure}
 
-  \begin{subfigure}[t]{0.49\textwidth}
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{plotcon24.png}\vspace{-0.2em}
         \caption{Variable file size for 24 open connections}\vspace{-0.2em}
 		\label {fig:latency-to-size-24}
   \end{subfigure}
-  \begin{subfigure}[t]{0.49\textwidth}
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{plotcon500.png}\vspace{-0.2em}
         \caption{Variable file size for 500 open connections}\vspace{-0.2em}
 		\label {fig:latency-to-size-500}
@@ -214,7 +214,7 @@ CPU consumption is recorded, CPU\_CLK\_UNHALTED\_CORE is the metric provided by 
 
   \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{cuc-to-size.png}\vspace{-0.2em}
-        \caption{CPU usage}\vspace{-0.2em}
+        \caption{CPU cycles}\vspace{-0.2em}
 		\label{fig:cuc-to-size}
   \end{subfigure}
 
@@ -238,6 +238,7 @@ Then we launch the OSU Micro Benchmark\,\cite{osumicrobenchmark} alongside with 
 The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:throughput-rest-mpi}. We notice that:
 
 \begin{figure}[!bt]
+  \centering
   \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{latency-rest-mpi.png}\vspace{-0.2em}
         \caption{Latency}\vspace{-0.2em}
@@ -248,7 +249,7 @@ The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:
         \caption{Throughput}\vspace{-0.2em}
 		\label{fig:throughput-rest-mpi}
   \end{subfigure}
-\caption{Results for the different protocols for variable file size}
+\caption{Results for the protocols for a variable file size}
 \end{figure}
 
 
@@ -259,22 +260,22 @@ The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:
   \item Another particular finding depicted by \cref{fig:cpu-usage-rest-mpi} is that the CPU cycles needed for the sender to push the data when using MPI is higher than by using REST, this becomes visible for file sizes above 100\,KB.
 \item \Cref{fig:l3ev-rest-mpi} shows that, as expected, the evicted data volume stays constant in the case of MPI over RDMAoIB because of the direct data transfer from server main memory to client main memory. Furthermore, the L3-evicted memory for both REST and MPI over TCPoIB is constant for files smaller than 100 KB but increases exponentially afterward. Presumably, because parts of the protocol such as network packets re/assembly is controlled by the kernel and not the network interface.
 \end{itemize}
-\begin{figure}
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
+
+\begin{figure}[!bt]
+\centering
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}\vspace{-1em}
-        \caption{CPU usage per request, on the server and client, for each protocol}\vspace{-1.5em}
-		\label{fig:cpu-usage-rest-mpi}
-    \end{minipage}\hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering\vspace{-2em}
+        \caption{CPU cycles per request}\vspace{-1.5em}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}\vspace{-1em}
-        \caption{L3 evicted per request, on the server and client, for each protocol}\vspace{-1.5em}
+        \caption{L3 evicted per request}\vspace{-1.5em}
 		\label{fig:l3ev-rest-mpi}
-    \end{minipage}
+  \end{subfigure}
+
+\caption{Likwid metrics for the client and server for the different protocols}
 \end{figure}
-\vspace{-1.5em}
+
 \subsection{HTTP Overhead}
 
 For HTTP 1.1, knowing the amount of bytes\_read by the HTTP parser in wrk, and the number of request achieved:
