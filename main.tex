@@ -355,11 +355,11 @@ Despite the obvious traffic saving of HTTP2, it comes at a considerable memory c
 
 \section{Summary}
 This paper provides a first assessment of using REST as a storage protocol in an HPC environment. A performance model for the relevant HTTP Get/Put operation based on hardware counters is provided and experimentally validated.
-Our results demonstrate that REST can provide in many cases similar latency and throughput to the HPC-specific implementations of MPI while enabling better portability.
+Our results demonstrate that REST can provide, in many cases, similar latency and throughput to the HPC-specific implementations of MPI while enabling better portability.
 The developed model covered the general behavior of the different protocols well and was able to generalize and verify the expected behavior. 
 
 The new techniques introduced in HTTP (the use of a small number of connections, multiplexing the HTTP datagram, compressing the header and allowing the server to “push” data pro-actively to the client whilst eventually using UDP to accomplish these) bear the potential to improve performance and, thus, provide a perspective for using cloud storage inside HPC environments.
-However, in this evaluation they couldn't show their benefit.
+However, in this evaluation, they couldn't show their benefit.
 As future work, we aim to validate that REST is a performant and efficient alternative to common HPC I/O protocols in an actual HPC scenario.
 
 \nocite{*}
