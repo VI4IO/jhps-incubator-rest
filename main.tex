@@ -40,7 +40,7 @@ DKRZ, 20146 Hamburg \\
 
 \begin{abstract}
 With the significant advances in Cloud Computing, it is inevitable to explore the usage of Cloud technology in HPC workflows. While many Cloud vendors offer to move complete HPC workloads into the Cloud, this is limited by the massive demand of computing power alongside storage resources typically required by I/O intensive HPC applications. It is widely believed that HPC hardware and software protocols like MPI yield superior performance and lower resource consumption compared to the HTTP transfer protocol used by RESTful Web Services that are prominent in Cloud execution and Cloud storage. With the advent of enhanced versions of HTTP, it is time to reevaluate the effective usage of cloud-based storage in HPC and their ability to cope with various types of data-intensive workloads.
-In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant and resource-efficient solution, in particular for accessing large files.
+In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant, and resource-efficient solution, in particular for accessing large files.
 \keywords{HPC \and Cloud \and Convergence \and HTTP2 \and RESTful APIs \and HTTP3 \and Storage.}
 \end{abstract}
 %
@@ -50,7 +50,7 @@ In this paper, we investigate the overhead of the REST protocol via HTTP compare
 High-Performance Computing (HPC) utilizes clusters of powerful and fast interconnected computers that can handle complex and data-intensive computational problems. These systems are managed by batch schedulers \cite{ma2004dynamic} where user jobs are queued to be served based on resource usage and availability and without any visibility or concerns on the costs of running jobs.
 Due to various factors, Cloud Computing \,\cite {mell2011nist} gained popularity over the last decade. This has led to the emergence of the \textit{HPC Cloud}, where Cloud providers offer high-end hardware platforms and software environments to run HPC applications.
 
-Due to its simplicity, reliability, flexibility, and consistency, HTTP is the de facto standard for accessing object storage like Amazon S3 \cite{awsS3Url}, OpenStack Swift, and EMC Atmos. A wide adoption of cloud storage in HPC requires the evaluation of  the suitability of using HTTP in the HPC environment as an alternative to HPC-native communication protocols like MPI.
+Due to its simplicity, reliability, flexibility, and consistency, HTTP is the de facto standard for accessing object storage like Amazon S3 \cite{awsS3Url}, OpenStack Swift, and EMC Atmos. A wide adoption of cloud storage in HPC requires the evaluation of the suitability of using HTTP in the HPC environment as an alternative to HPC-native communication protocols like MPI.
 
 In this work, we first provide a detailed examination of the HTTP protocol and its performance in terms of latency and throughput under different conditions for accessing remote data. Secondly, we elaborate on an analytic performance model for data transfer over several protocols, this model allows us to compare current and future protocols in a common framework and will help us predict protocol performance in different hardware environments. We perform several benchmarks comparing MPI to HTTP and use our model to validate the obtained results. Finally, and based on the evaluation, we pinpoint the cause of the HTTP overhead and find that TCP is not the ideal transport protocol for HTTP and that new versions of the HTTP protocol, like HTTP3 which uses UDP, might accelerate the usage of cloud storage in HPC.
 The structure of this paper is as follows: \Cref{sec:related} represents the related work. \Cref{sec:methodology} describes the test scenarios and defines the relevant metrics that will be addressed using our benchmarks. \Cref{sec:experiments} describes the experimental procedure, the used systems, and the methodology of the evaluation conducted in this work. \Cref{sec:evaluation} analyzes the obtained results. The last section summarizes our findings.
@@ -136,7 +136,7 @@ As such, many factors can influence the above starting from the application deli
 
 \section{Experiments}
 \label{sec:experiments}
-The tests were performed on two different hardware platforms: the first is the WR Cluster, a small test system, equipped with Intel Xeon 5650 processors and Gbit Ethernet, the second is the Mistral supercomputer\,\cite{mistral}, the HPC system for earth-system research provided at the German Climate Computing Center (DKRZ), it provides 3000 compute nodes each equipped with an FDR Infiniband interconnect. The nodes used for the testing are equipped with two Intel Broadwell processors (E5-2680 @2.5 GHz) \cite{intel-xeon}
+The tests were performed on two different hardware platforms: the first is the WR Cluster, a small test system, equipped with Intel Xeon 5650 processors and Gbit Ethernet, the second is the Mistral supercomputer\,\cite{mistral}, the HPC system for earth-system research at the German Climate Computing Center (DKRZ), it provides 3000 compute nodes each equipped with an FDR Infiniband interconnect. The nodes used for the testing are equipped with two Intel Broadwell processors (E5-2680 @2.5 GHz) \cite{intel-xeon}
 
 \subsection{Benchmark and Analysis Tools}\label{subsec:benchmark1}
 The RESTful API is the typical way to realize access to object storage, and as such the tools used in this article were preliminary developed to assess HTTP performance.
@@ -199,10 +199,11 @@ The network throughput of our system is calculated as follow:
 \end{minipage}
 
 The results are shown in \Cref{fig:throughput-to-size}.
-In the case of inter-node communication, an increase in the number of Open Connections will increase the throughput, however, for file sizes above 1 MB, the performance looks similar as latency can be neglected.
-\begin{figure}[bt]
+In the case of inter-node communication, an increase in the number of Open Connections will increase the throughput, however, this is only relevant for small file sizes below 1 MB.
+
+\begin{figure}[bt]
 \includegraphics[width=1.0\textwidth]{throughput-to-size.png}\vspace{-0.5em}
-\caption{Throughput in KB/sec for a variable object size and open connections/threads}
+\caption{Throughput in KB/sec for a variable object size and open connections/threads}\vspace{-1.5em}
 \label{fig:throughput-to-size}
 \end{figure}
 
@@ -214,21 +215,20 @@ CPU consumption is recorded, CPU\_CLK\_UNHALTED\_CORE is the metric provided by 
 \begin{figure}[!bt]
     \centering
 
-  \begin{subfigure}[t]{0.7\textwidth}
+  \begin{subfigure}[t]{0.8\textwidth}
         \includegraphics[width=1\textwidth]{cuc-to-size.png}\vspace{-0.2em}
         \caption{CPU cycles}\vspace{-0.2em}
 		\label{fig:cuc-to-size}
   \end{subfigure}
 
-  \begin{subfigure}[t]{0.7\textwidth}
+  \begin{subfigure}[t]{0.8\textwidth}
         \includegraphics[width=1\textwidth]{l3ev-to-size.png}\vspace{-0.2em}
 		\caption{L3 evicted volume}\vspace{-0.2em}
 		\label{fig:l3ev-to-size}
   \end{subfigure}
 
-\caption{Likwid metrics for the client and server with a variable size and Open Connections/Threads combination}
+\caption{Likwid metrics for the client and server with a variable size and Open Connections/Threads combination}\vspace{-1.2em}
 \end{figure}
-
 Regarding memory utilization: Basically, when reading a file (represented by HTTP response), the client needs to store the data received in memory. If the file size exceeds the size of the CPU cache, we expect that data is evicted to main memory, which is measured in L3 cache evictions. This metric is recorded using Likwid and shown in \Cref{fig:l3ev-to-size}. Basically, we can see that even for 100 MB files only 10 MB of data is evicted on the client. There is no eviction on the server because it sends the data directly to the client. This is an indication that zero-copy \cite{zerocopy} is in use on the client and the network interface card offloads the processing of TCP/IP. This allows  the network card to store the data directly into the target memory location. Generally, with zero-copy, the application requests the kernel to copy the data directly from a file descriptor to the socket bypassing the copy in user mode buffer and, therefore, reducing the number of context switches between kernel and user mode.
 Furthermore, when data does not fit in the processor L3 caches (12 MB), the evicted data, i.e., the data passed to memory increases significantly causing a performance drop, curiously the rate of increase of the client evicted memory is greater than on the server, leading us to another interesting conclusion, namely that while most studies focused on optimizing the server-side, it might be the client-side that needs to be addressed.
 
@@ -268,6 +268,7 @@ The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:
   \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}\vspace{-0.2em}
         \caption{CPU cycles per request}\vspace{-0.2em}
+		\label{fig:cpu-usage-rest-mpi}
   \end{subfigure}
   \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}\vspace{-0.2em}
@@ -354,7 +355,7 @@ Despite the obvious traffic saving of HTTP2, it comes at a considerable memory c
 
 \section{Summary}
 This paper provides a first assessment of using REST as a storage protocol in an HPC environment. A performance model for the relevant HTTP Get/Put operation based on hardware counters is provided and experimentally validated.
-Our results demonstrate that, REST can provide in many cases similar latency and throughput to the HPC-specific implementations of MPI while enabling better portability.
+Our results demonstrate that REST can provide in many cases similar latency and throughput to the HPC-specific implementations of MPI while enabling better portability.
 The developed model covered the general behavior of the different protocols well and was able to generalize and verify the expected behavior. 
 
 The new techniques introduced in HTTP (the use of a small number of connections, multiplexing the HTTP datagram, compressing the header and allowing the server to “push” data pro-actively to the client whilst eventually using UDP to accomplish these) bear the potential to improve performance and, thus, provide a perspective for using cloud storage inside HPC environments.
