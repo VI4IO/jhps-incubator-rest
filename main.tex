@@ -153,7 +153,8 @@ In the following analysis, we vary the number of threads and the number of HTTP 
 \subsection{Latency}\label{subsec:latency}
 The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obtained latency distributions.
 
-\begin{figure}[!b]
+\begin{figure}[p]
+\centering
   \begin{subfigure}[t]{0.7\textwidth}
         \includegraphics[width=1\textwidth]{plotfile100.png}\vspace{-0.2em}
         \caption{Variable open connections for 100\,KB files}\vspace{-0.2em}
@@ -196,11 +197,12 @@ The network throughput of our system is calculated as follow:
 \begin{minipage}{0.5\textwidth}
 \[Throughput=\frac{Nreq \cdot Obj\_size}{time}\]
 \end{minipage}
-\vspace{-1.5em}
-\begin{figure}
-\includegraphics[width=1.0\textwidth]{throughput-to-size.png}\vspace{-4.5em}
-\caption{Throughput in KB/sec related to object size for different combinations of Open Connections/Threads: in the case of inter-node communication, an increase in the number of Open Connections will increase the throughput, however, for file sizes above 1 MB, the influence becomes negligible}
-\vspace{-2.5em}
+
+The results are shown in \Cref{fig:throughput-to-size}.
+In the case of inter-node communication, an increase in the number of Open Connections will increase the throughput, however, for file sizes above 1 MB, the performance looks similar as latency can be neglected.
+\begin{figure}[bt]
+\includegraphics[width=1.0\textwidth]{throughput-to-size.png}\vspace{-0.5em}
+\caption{Throughput in KB/sec for a variable object size and open connections/threads}
 \label{fig:throughput-to-size}
 \end{figure}
 
@@ -264,12 +266,12 @@ The obtained results are used to plot \cref{fig:latency-rest-mpi} and \cref{fig:
 \begin{figure}[!bt]
 \centering
   \begin{subfigure}[t]{0.7\textwidth}
-        \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}\vspace{-1em}
-        \caption{CPU cycles per request}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{cpu-usage-rest-mpi.png}\vspace{-0.2em}
+        \caption{CPU cycles per request}\vspace{-0.2em}
   \end{subfigure}
   \begin{subfigure}[t]{0.7\textwidth}
-        \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}\vspace{-1em}
-        \caption{L3 evicted per request}\vspace{-1.5em}
+        \includegraphics[width=1\textwidth]{l3ev-rest-mpi.png}\vspace{-0.2em}
+        \caption{L3 evicted per request}\vspace{-0.2em}
 		\label{fig:l3ev-rest-mpi}
   \end{subfigure}
 
