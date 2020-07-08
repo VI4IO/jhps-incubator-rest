@@ -25,7 +25,7 @@
 
 
 \begin{document}
-\title{Investigating the Overhead of the REST Protocol when Using Cloud Services for HPC Storage} 
+\title{Investigating the Overhead of the REST Protocol when Using Cloud Services for HPC Storage}
 \author{Frank Gadban\inst{1} \and Julian Kunkel\inst{2} \and Thomas Ludwig\inst{3}}
 \authorrunning{F. Gadban et al.}
 \institute{University of Hamburg, 20146 Hamburg, Germany
@@ -36,11 +36,11 @@ Reading University, Reading, UK\\
 DKRZ, 20146 Hamburg \\
 }
 
-\maketitle     
-  
+\maketitle
+
 \begin{abstract}
-With the significant advances in Cloud Computing, it is inevitable to explore the usage of Cloud technology in HPC workflows. While many Cloud vendors offer to move complete HPC workloads into the Cloud, this is limited by the massive demand of computing power alongside storage resources typically required by I/O intensive HPC applications. It is widely believed that HPC hardware and software protocols like MPI yield superior performance and lower resource consumption compared to the HTTP transfer protocol used by RESTful Web Services that are prominent in Cloud execution and Cloud storage. With the advent of enhanced versions of HTTP, it is time to reevaluate the effective usage of cloud-based storage in HPC and their ability to cope with various types of data-intensive workloads. 
-In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant and resource-efficient solution, in particular for accessing large files. 
+With the significant advances in Cloud Computing, it is inevitable to explore the usage of Cloud technology in HPC workflows. While many Cloud vendors offer to move complete HPC workloads into the Cloud, this is limited by the massive demand of computing power alongside storage resources typically required by I/O intensive HPC applications. It is widely believed that HPC hardware and software protocols like MPI yield superior performance and lower resource consumption compared to the HTTP transfer protocol used by RESTful Web Services that are prominent in Cloud execution and Cloud storage. With the advent of enhanced versions of HTTP, it is time to reevaluate the effective usage of cloud-based storage in HPC and their ability to cope with various types of data-intensive workloads.
+In this paper, we investigate the overhead of the REST protocol via HTTP compared to the HPC-native communication protocol MPI when storing and retrieving objects. Albeit we compare the MPI for a communication use case, we can still evaluate the impact of data communication and, therewith, the efficiency of data transfer for data access patterns. We accomplish this by modeling the impact of data transfer using measurable performance metrics. Hence, our contribution is the creation of a performance model based on hardware counters that provide an analytical representation of data transfer over current and future protocols. We validate this model by comparing the results obtained for REST and MPI on two different cluster systems, one equipped with Infiniband and one with Gigabit Ethernet. The evaluation shows that REST can be a viable, performant and resource-efficient solution, in particular for accessing large files.
 \keywords{HPC \and Cloud \and Convergence \and HTTP2 \and RESTful APIs \and HTTP3 \and Storage.}
 \end{abstract}
 %
@@ -90,7 +90,7 @@ To define our performance model, many metrics are considered, which depict the u
 \begin{itemize}
 \item CUC: number of unhalted cycles on each core %a.k.a. CPU\_CLK\_UNHALTED\_CORE, CUCs and CUCc are for the server and client respectively.
 \item L3EV:amount of data volume loaded and evicted from/to L3 from the perspective of CPU cores\cite{l3explainedlik,intel-l3}, L3EVs and L3EVc are for server and client respectively.
-\item PLR: the packet loss rate, proportional to the number of parallel connections. 
+\item PLR: the packet loss rate, proportional to the number of parallel connections.
 \end{itemize}
 In our preliminary model t(request) is the time starting from the sending of the first byte of the request to the time the complete response is received:
 \begin{equation}
@@ -182,7 +182,7 @@ The diagrams in \cref{fig:latency-to-oc-1000,fig:latency-to-oc-100} show the obt
 
 \textbf{Observations and interpretations:}
 \begin{itemize}
-  \item Latency linearly increases with the number of open connections (see \Cref{fig:latency-to-oc-100}), especially true for small file sizes however when the file size grows beyond a certain limit, the number of connections will become irrelevant to the introduced latency (see \Cref{fig:latency-to-oc-1000}). 
+  \item Latency linearly increases with the number of open connections (see \Cref{fig:latency-to-oc-100}), especially true for small file sizes however when the file size grows beyond a certain limit, the number of connections will become irrelevant to the introduced latency (see \Cref{fig:latency-to-oc-1000}).
   \item As shown in fig.\ref{fig:latency-to-size-24}, for small file size, we observe a latency divergence in particular in the 99 percentile area
 for bigger file size, we noticed in the case of the 100\,KB, the desired request rate of 2000 req/s is not met due to the limitation of the underlying network infrastructure ( 1Gb/s ~ 125 MB/s)
   \item It is interesting to note that, in relation to file size (fig.\ref{fig:latency-to-size-24}) larger files lead to higher memory and network latencies in a way that they can saturate the server’s network bandwidth, lowering throughput (see \Cref{fig:latency-to-oc-1000}). Therefore,  for  serving  large files,  high  network  bandwidth  is  more  important  than compute resources. On the other hand, increasing the number of open Connections (fig.\ref{fig:latency-to-size-500}) will trigger TCP's congestion mechanism and such they will be competing for the same bandwidth. Increasing the file size as well will cause the Open Connections to lose packets and get stuck waiting for retransmissions.
@@ -208,7 +208,7 @@ In the case of inter-node communication, an increase in the number of Open Conne
 
 \subsection{Resource Usage Measurements}
 In addition to the latency diagrams and the findings gained from them, another point to consider is the efficiency of the IO itself, this is why we measure the Memory and CPU usage needed to achieve a certain throughput. To accomplish this, likwid-perfctr\,\cite{likwid} is used. It uses the Linux ‘msr’ module to access the model specific registers stored in /dev/cpu/*/msr (which contain hardware performance counters), and calculates performance metrics, FLOPS, bandwidth, etc, based on the event counts collected over the runtime of the application process.
-The conducted experiment is similar to Section 4.2, however, this time we are using wrk\cite{wrkURL} without specifying a maximum req/s rate, for 1 minute, during this time Likwid is recording the CPU performance counters which are relevant in this scenario. The server application is pinned to one core using Likwid, the same is done on the client side, As wrk tests are performed using only 1 thread, this doesn’t impose a performance limitations and ensures that the process is run on the first physical core and not migrated between cores which may lead to overhead. 
+The conducted experiment is similar to Section 4.2, however, this time we are using wrk\cite{wrkURL} without specifying a maximum req/s rate, for 1 minute, during this time Likwid is recording the CPU performance counters which are relevant in this scenario. The server application is pinned to one core using Likwid, the same is done on the client side, As wrk tests are performed using only 1 thread, this doesn’t impose a performance limitations and ensures that the process is run on the first physical core and not migrated between cores which may lead to overhead.
 CPU consumption is recorded, CPU\_CLK\_UNHALTED\_CORE is the metric provided by Likwid that represents the number of clock ticks needed by the CPU to do some reasonable work. The instructions required to accomplish one request - by the server as well as by the client - seems to be linear with the file size, as shown in \Cref{fig:cuc-to-size}. To note that the server seems to be consuming more CPU cycles as the client to deliver a request, which might be because we are using the lighttpd web server without modifying the default configuration. Note also that over a certain file size limit, the number of timeouts increases since we are approaching the maximum throughput achieved by the system.
 
 \begin{figure}[!bt]
@@ -293,7 +293,7 @@ We only need to get the values of the coefficients $\beta_i$ in \cref{eq:model}.
  error\%=(t\_req -t\_req\_calcul)\cdot100/t\_req
 \label{eq:error-rate}
 \end{equation}
-In case of RESToTCPoIB, we find that ($\alpha$ = 1) , $\beta_1$ = $\beta_3$ = $\beta_4$ $\sim$ 1 , $\beta_2$ = 6 and $\beta_5$ = 3/2. 
+In case of RESToTCPoIB, we find that ($\alpha$ = 1) , $\beta_1$ = $\beta_3$ = $\beta_4$ $\sim$ 1 , $\beta_2$ = 6 and $\beta_5$ = 3/2.
 The deviation (error rate) between the estimated value and the benchmark results is primarily below 10 percent, and indeed in the range of 1 percent for small and large file sizes.\Cref{eq:model} yields:
 \begin{equation}
 \label{eq:model-rest}
@@ -323,7 +323,7 @@ The latency and throughput results of the tests on Mistral over InfiniBand are s
     \centering
   \begin{subfigure}[t]{0.49\textwidth}
         \includegraphics[width=1\textwidth]{lat-h2load-mistral.png}\vspace{-0.5em}
-        \caption{Latency}		
+        \caption{Latency}
         \label {fig:lat-comp-mistral}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\textwidth}
@@ -350,10 +350,15 @@ The latency and throughput results of the tests on Mistral over InfiniBand are s
 \end{figure}
 
 Although we are expecting HTTP2 and HTTP3 to perform better than HTTP 1.1, this is not the case. A closer look at the evolution of the parameters defined in our model reveals the cause:
-Despite the obvious traffic saving of HTTP2, it comes at a considerable memory consumption, which renders the gained advantages negligible. The chosen HTTP3 implementation is circa 10 times CPU and memory consuming in comparison to the earlier versions, which indicates an implementation issue.
+Despite the obvious traffic saving of HTTP2, it comes at a considerable memory consumption, which renders the gained advantages negligible. The chosen HTTP3 implementation is circa 10 times more CPU and memory consuming in comparison to the earlier versions, which indicates an implementation issue.
+
 \section{Summary}
-This paper provides a first assessment of using REST as a storage protocol in an HPC environment. A performance model for the relevant HTTP Get/Put operation based on hardware counters is provided and experimentally validated. Our results demonstrate that, when the same transport protocol is in use, i.e. TCP, REST can provide similar latency and throughput to the HPC-specific interface MPI while enabling better portability.
-A careful comparison of the different HTTP Protocols suggests that the new techniques introduced by the newer versions of the protocol -- like the use of a small number of connections, multiplexing the HTTP datagram, compressing the header and allowing the server to “push” data pro-actively to the client whilst eventually using UDP to accomplish these -- bear the potential to improve performance and, thus, provide a perspective for using cloud storage inside HPC environments.
+This paper provides a first assessment of using REST as a storage protocol in an HPC environment. A performance model for the relevant HTTP Get/Put operation based on hardware counters is provided and experimentally validated.
+Our results demonstrate that, REST can provide in many cases similar latency and throughput to the HPC-specific implementations of MPI while enabling better portability.
+The developed model covered the general behavior of the different protocols well and was able to generalize and verify the expected behavior. 
+
+The new techniques introduced in HTTP (the use of a small number of connections, multiplexing the HTTP datagram, compressing the header and allowing the server to “push” data pro-actively to the client whilst eventually using UDP to accomplish these) bear the potential to improve performance and, thus, provide a perspective for using cloud storage inside HPC environments.
+However, in this evaluation they couldn't show their benefit.
 As future work, we aim to validate that REST is a performant and efficient alternative to common HPC I/O protocols in an actual HPC scenario.
 
 \nocite{*}
